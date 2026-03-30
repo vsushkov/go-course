@@ -1,0 +1,30 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  # Scrape metrics from Go applications running on the host
+  - job_name: 'myapp'
+    static_configs:
+      - targets: ['host.docker.internal:5123']
+    scrape_interval: 10s
+    metrics_path: /metrics
+    
+  # Scrape VMagent's own metrics
+  - job_name: 'vmagent'
+    static_configs:
+      - targets: ['vmagent:8429']
+    scrape_interval: 30s
+    
+  # Scrape Victoria Metrics metrics
+  - job_name: 'victoria-metrics'
+    static_configs:
+      - targets: ['victoria-metrics:8428']
+    scrape_interval: 30s
+    metrics_path: /metrics
+    
+  # Scrape Grafana metrics
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['grafana:3000']
+    scrape_interval: 30s
+    metrics_path: /metrics

@@ -1,0 +1,59 @@
+services:
+  vmagent:
+    image: victoriametrics/vmagent:latest
+    ports:
+      - "8429:8429"
+    command:
+      - --promscrape.config=/etc/vmagent/prometheus.yml
+      - --remoteWrite.url=http://victoria-metrics:8428/api/v1/write
+      - --httpListenAddr=:8429
+    volumes:
+      - ./vmagent-config.yml:/etc/vmagent/prometheus.yml
+    depends_on:
+      - victoria-metrics
+      - myapp
+    networks:
+      - observability
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # Victoria Metrics (Metrics Storage - faster than Prometheus)
+  victoria-metrics:
+    image: victoriametrics/victoria-metrics:latest
+    ports:
+      - "8428:8428"
+    command:
+      - --storageDataPath=/victoria-metrics-data
+      - --httpListenAddr=:8428
+      - --retentionPeriod=1
+    volumes:
+      - victoria-metrics-data:/victoria-metrics-data
+    networks:
+      - observability
+
+
+  # Grafana (Visualization)
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      - victoria-metrics
+    networks:
+      - observability
+
+
+volumes:
+  victoria-metrics-data:
+  grafana-data:
+
+networks:
+  observability:
+    driver: bridge
