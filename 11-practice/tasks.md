@@ -59,3 +59,35 @@ func writeError(w http.ResponseWriter, status int, code, msg, requestID string) 
 }
 
 ```
+
+### Middleware: request id (HTTP)
+Напишите middleware: берёт X-Request-Id из запроса или генерирует новый (16 байт random hex), кладёт в context, и выставляет в response header.
+
+```go
+type ctxKeyReqID struct{}
+
+func RequestID(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        // TODO
+		b := make([]byte, 16)
+        _, _ = rand.Read(b)
+        rid = hex.EncodeToString(b)
+		// TODO
+    }
+}
+```
+
+### Middleware: recover panic -> 500
+Напишите middleware, который ловит panic и возвращает 500.
+
+```go
+func Recover(next http.Handler) http.Handler {
+    // TODO
+	defer func() {
+        if rec := recover(); rec != nil {
+            // TODO
+        }
+    }()
+	// TODO
+}
+```
