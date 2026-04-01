@@ -42,7 +42,7 @@ func getNote(w http.ResponseWriter, r *http.Request) {
 
 ```go
 func list(w http.ResponseWriter, r *http.Request) {
-// TODO
+    // TODO
 }
 ```
 
@@ -89,5 +89,45 @@ func Recover(next http.Handler) http.Handler {
         }
     }()
 	// TODO
+}
+```
+
+### ResponseWriter wrapper: логировать status code
+Реализуйте statusWriter, который запоминает status code.
+
+```go
+type statusWriter struct {
+    http.ResponseWriter
+    status int
+}
+
+func (sw *statusWriter) WriteHeader(code int) {
+    // TODO
+}
+```
+
+### Валидация: required + max len
+Напишите Validate(). Правила: email required, name max 50 (trim spaces). Возвращайте map[string]string.
+
+```go
+type CreateUserRequest struct {
+    Email string json:"email"
+    Name  string json:"name"
+}
+
+func (r CreateUserRequest) Validate() map[string]string {
+	// TODO
+
+    return errs
+}
+```
+
+
+### Enum validation
+Проверьте, что role ∈ {"user","admin"}.
+
+```go
+func validateRole(role string) error {
+    // TODO
 }
 ```
